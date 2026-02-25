@@ -1,4 +1,4 @@
-#🐍 Python Mini Projects Collection
+#Python Mini Projects Collection 🐍 
 
 Welcome to my Python Mini Projects repository!
 This repo is a growing collection of small, focused Python projects built to explore concepts, practice problem-solving, and experiment with different tools and libraries.
