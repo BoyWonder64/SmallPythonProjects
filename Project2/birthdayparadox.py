@@ -103,6 +103,23 @@ print('that', numBDays, 'people have a ', probability, '% chance of')
 print('having a matching birthday in their group.')
 print('Thats\'s probably more than you would think!')
         
-        
+  
+# Test your knowledge:      
     
-   
+# How are birthdays represented in this program
+    # Year, month, day, always 2000 and up
+
+# How could you remove the maximum limit of 100 birthdays this program generates
+    # Simply change line 52,  if response.isdecimal() and (0 < int(response) <= 100):
+    # to go from 100 to a number you deem fit
+    
+# What error do you get if you comment out 
+    # numBDays is not defined
+
+# How can you get the program to print out full month names instead of 
+# Jan, Feb
+    # simply change the tuple list to have full names
+    
+# How could you make 'X simulations run...' appear every 1000 instead of 
+# every 10,000
+    # simply change if i % 10000 == 0: to if i % 1000 == 0:
