@@ -11,7 +11,7 @@ def getBirthdays(numberOfBirthdays):
     for i in range (numberOfBirthdays):
         # The year is unimportant for our simulation, as long as all 
         # birthdays have the same year.
-        startOfYear = datetime.date(date, 2000, 1)
+        startOfYear = datetime.date(2000, 1, 1)
         
         # Get a random day into the year:
         randomNumberOfDays = datetime.timedelta(random.randint(0, 364))
