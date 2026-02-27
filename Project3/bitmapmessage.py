@@ -71,3 +71,17 @@ for line in bitmap.splitlines(): # Splits a big multi-line string into a list of
             8 % 3 = 2  = g
             '''
     print() # Print a newline
+
+# What happens if the player enters a blank string for the message?
+    # the program exits
+    
+# Does it matter what the nonspace characters are in the bitmap variables string?
+    # no, regardless of what it see, its just counting if something is there or not, were not scanning
+    # for *, this is why the map also prints characters for the header and footer
+
+# what does the i variable on line 41 represent
+    # the index
+    
+# What bug/happens if you delete the final line print()
+    # the bitmap output doesnt create a newline and so it will being the next message on the same line
+    # until the terminal forces a new line and therefore the message becomes jumbled. 
