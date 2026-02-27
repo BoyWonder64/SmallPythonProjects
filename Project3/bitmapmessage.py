@@ -36,13 +36,38 @@ if message == '':
     sys.exit()
     
 # Loop over each line in the bitmap:
-for line in bitmap.splitlines():
+for line in bitmap.splitlines(): # Splits a big multi-line string into a list of lines. example: ['***', '* *', '***']
     # Loop over each character in the line:
-    for i, bit in enumerate(line):
+    for i, bit in enumerate(line): #enumerate takes the list we created and enumerates them: ['***'] = [(0,'*'),(1,'*'),(2,'*')]
+        '''line = "DOG"
+
+            for i, bit in enumerate(line):
+                print("Index:", i, "Character:", bit)
+                ***********************************
+                Index: 0 Character: D
+                Index: 1 Character: O
+                Index: 2 Character: G
+                ***********************************
+                '''
+                
         if bit == ' ':
             # print an empty space since theres a space in the bitmap:
-            print (' ', end='')
+            print (' ', end='') # A normal print once finished will end include by default '/n' example print('Yo what up', end='/n') but 
+            # if we change the value to end='' we stay on the same line. 
         else:
             # Print a character from the message:
-            print(message[i % len(message)], end='')
+            print(message[i % len(message)], end='') # i % len(message) means: Keep i between 0 and the last index of the message
+            # if message = cat then lenth of message is 3 (length starts counting at 1) and therefore if the line is dogdogdogdog the index count is = 11
+            # therefore the printing logic is: 
+            '''
+            0 % 3 = 0  = d
+            1 % 3 = 1  = 0
+            2 % 3 = 2  = g
+            3 % 3 = 0  = d
+            4 % 3 = 1  = o
+            5 % 3 = 2  = g
+            6 % 3 = 0  = d
+            7 % 3 = 1  = o
+            8 % 3 = 2  = g
+            '''
     print() # Print a newline
