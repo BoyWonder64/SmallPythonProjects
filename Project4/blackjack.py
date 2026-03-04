@@ -25,7 +25,7 @@ def main():
           In case of a tie, the bet is returned to the player.
           The dealer stops hitting at 17''')
     
-    money = 5000
+    money = 5000 # establish players bank. 
     while True: # Main game loop
         # Check if the player has any money before proceeding
         if money <= 0:
@@ -42,18 +42,18 @@ def main():
         
         # Give the dealer and player two cards from the deck each:
         deck = getDeck()
-        dealerHand = [deck.pop(), deck.pop()]
+        dealerHand = [deck.pop(), deck.pop()] # Removes 2 cards from end of list
         playerHand = [deck.pop(), deck.pop()]
         
         # Handle the player actions
         print('Bet:', bet)
         while True: # Keep looping until player stands or busts
-            displayHands(playerHand, dealerHand, False)
+            displayHands(playerHand, dealerHand, False) # Call displayHands with three arguments
             print()
             
             # Check if player has busts
             if getHandValue(playerHand) > 21:
-                break
+                break # GAME OVER 
             
             # Get the player's move, either H, S and D:
             move = getMove(playerHand, money - bet)
@@ -62,6 +62,7 @@ def main():
             if move == 'D':
                 # Player is doubling down, they can increase their bet:
                 additionalBet = getBet(min(bet, (money - bet))) 
+                #min returns the smaller of the two values
                 bet += additionalBet
                 print('Bet increased to {}.'.format(bet))
                 print('Bet:', bet)
@@ -99,8 +100,16 @@ def main():
             
             playerValue = getHandValue(playerHand)
             dealerValue = getHandValue(dealerHand)
-            # Handle whether the player won, lost, or tiedL
-            if dealerValue > 21:
+            isplayerBlackJack = checkBlackJack(playerHand) # Check if player has blackjack
+            isDealerBlackJack = checkBlackJack(dealerHand) # Check if dealer has blackjack
+            # Handle whether the player won, lost, or tied
+            if isplayerBlackJack == True:
+                bet = bet * 10 # You win big!
+                money += bet
+            elif isDealerBlackJack == True:
+                bet = bet * 10 # You lose big!!
+                money -= bet
+            elif dealerValue > 21:
                 print('Dealer busts! You win ${}!'.format(bet))
                 money += bet
             elif(playerValue > 21) or (playerValue < dealerValue):
@@ -110,7 +119,7 @@ def main():
                 print('You won ${}'.format(bet))
                 money += bet
             elif playerValue == dealerValue:
-                print('It\s a tie, the bet is returned to you.')
+                print("It's a tie, the bet is returned to you.")
             
             input('Press Enter to continue...')
             print('\n\n')
@@ -146,7 +155,7 @@ def displayHands(playerHand, dealerHand, showDealerHand):
     """Show the player's and dealer's cards. Hide the dealer's 
     first card if showDealerHand is False"""
     print()
-    if showDealerHand:
+    if showDealerHand: # Bool value
         print('DEALER:' , getHandValue(dealerHand))
         displayCards(dealerHand)
     else:
@@ -181,7 +190,26 @@ def getHandValue(cards):
         if value + 10 <= 21:
             value += 10
     
+    checkBlackJack(cards)
     return value
+
+# Determine if the player has a blackjack
+# If their first two cards are an ace of spades and a black jack
+def checkBlackJack(cards):
+    isBlackJack = False
+    if len(cards) == 2:
+        rank1 = cards[0][0] # (rank)(suit) == exp: ('A', '♠')
+        rank2 = cards[1][0]
+        
+        checkCards = ('10', 'J', 'Q', 'K') # we are checking for these cards
+        
+        if rank1 == 'A' and rank2 in checkCards:
+            isBlackJack = True
+        elif rank2 == 'A' and rank1 in checkCards:
+            isBlackJack = True
+    
+    return isBlackJack
+        
 
 
 def displayCards(cards):
@@ -219,9 +247,9 @@ def getMove(playerHand, money):
             moves.append('(D)ouble down')
             
         # Get the player's move:
-        movePrompt = ', '.join(moves) + '> '
-        move = input(movePrompt).upper()
-        if move in ('H', 'S'):
+        movePrompt = ', '.join(moves) + '> ' # combine all moves
+        move = input(movePrompt).upper() # Format them 
+        if move in ('H', 'S'): # Check what move the player gave us
             return move # The player has entered a valid move.
         if move == 'D' and '(D)ouble down' in moves:
             return move # Player has entered a valid move
