@@ -104,10 +104,13 @@ def main():
             dealerValue = getHandValue(dealerHand)
             isplayerBlackJack = checkBlackJack(playerHand) # Check if player has blackjack
             isDealerBlackJack = checkBlackJack(dealerHand) # Check if dealer has blackjack
+            isFirstTwoaPair = checkFirstTwoPair(playerHand) 
             # Handle whether the player won, lost, or tied
             if isplayerBlackJack == True:
                 bet = bet * 10 # You win big!
                 money += bet
+            elif isFirstTwoaPair == True:
+                bet = bet * 2
             elif isDealerBlackJack == True:
                 bet = bet * 10 # You lose big!!
                 money -= bet
