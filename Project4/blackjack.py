@@ -275,3 +275,22 @@ def getMove(playerHand, money):
 # if the program is run (instead of imported), run the game:
 if __name__ == '__main__':
     main()
+    
+# Test your knowledge
+
+# How does the program represent a single card?
+    # Each card is apart of a list of 52 cards. The program enumerates the deck
+
+# How does the program represent a hand of cards
+    # The logic is handled in the displayCards function
+
+# What do each of the strings in the list in line 235 represent
+    # place holders for the cards
+
+# What happens if you delete the random.shuffle(deck) line?
+    # The deck will not be shuffled and stay in the same order every time
+
+# What happens when showDealerHand in the displayHands is True
+    # It shows what is upcoming and allows the player to cheat
+# What happens if its false?
+    # It never reveals the dealers card and we have to take the program at its word
