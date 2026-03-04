@@ -87,7 +87,7 @@ def main():
                 # The dealer hits:
                 print('Dealer Hits...')
                 dealerHand.append(deck.pop())
-                displayHands(playerHand dealerHand, False)
+                displayHands(playerHand, dealerHand, False)
                 
                 if getHandValue(dealerHand) > 21:
                     break # The dealer has busted.
@@ -173,5 +173,59 @@ def getHandValue(cards):
             value += 10
         else:
             value += int(rank) # Numbered cards are worth their number.
+        
+    # Add the value of the aces:
+    value += numberOfAces # Add 1 per ace.
+    for i in range(numberOfAces):
+        # If another 10 can be added with busting, do so:
+        if value + 10 <= 21:
+            value += 10
+    
+    return value
+
+
+def displayCards(cards):
+    """Display all the cards in the cards list."""
+    rows = ['', '', '', '', ''] # The text to display on each row
+    
+    for i, card in enumerate(cards):
+        rows[0] += ' ___ ' # Print the top line of the card
+        if card == BACKSIDE:
+            # Print a cards back:
+            rows[1] += '|## |'
+            rows[2] += '|###|'
+            rows[3] += '| ##|'
+        else:
+            # Print the card's front:
+            rank, suit = card # The card is a tuple data structures
+            rows[1] += '|{} | '.format(rank.ljust(2))
+            rows[2] += '| {} | '.format(suit)
+            rows[3] += '|_{}|'.format(rank.rjust(2, '_'))
+    
+    # Print each row on the screen
+    for row in rows:
+        print(row)
+        
+def getMove(playerHand, money):
+    """Asks the player for their move, and returns 'H' for hit, 'S' for
+    stand, and 'D' for double down."""
+    while True: # Keep looping until the player enters a correct move.
+        # Determine what moves the player can make:
+        moves = ['(H)it', '(S)tand']
+        
+        # The player can double down on their first move, which we can
+        # tell because they'll have exactly two cards:
+        if len(playerHand) == 2 and money > 0:
+            moves.append('(D)ouble down')
             
-                    
+        # Get the player's move:
+        movePrompt = ', '.join(moves) + '> '
+        move = input(movePrompt).upper()
+        if move in ('H', 'S'):
+            return move # The player has entered a valid move.
+        if move == 'D' and '(D)ouble down' in moves:
+            return move # Player has entered a valid move
+        
+# if the program is run (instead of imported), run the game:
+if __name__ == '__main__':
+    main()
