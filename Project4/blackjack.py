@@ -10,6 +10,8 @@ DIAMONDS = chr(9830)
 SPADES = chr(9824)
 CLUBS = chr(9827)
 BACKSIDE = 'backside'
+CHECKCARDS = ('10', 'J', 'Q', 'K')
+FACECARDS = ('J', 'Q', 'K', 'A')
 
 def main():
     print('''Welcome to Blackjack!
@@ -201,16 +203,29 @@ def checkBlackJack(cards):
         rank1 = cards[0][0] # (rank)(suit) == exp: ('A', '♠')
         rank2 = cards[1][0]
         
-        checkCards = ('10', 'J', 'Q', 'K') # we are checking for these cards
+        # checkCards = ('10', 'J', 'Q', 'K') # we are checking for these cards
         
-        if rank1 == 'A' and rank2 in checkCards:
+        if rank1 == 'A' and rank2 in CHECKCARDS:
             isBlackJack = True
-        elif rank2 == 'A' and rank1 in checkCards:
+        elif rank2 == 'A' and rank1 in CHECKCARDS:
             isBlackJack = True
     
     return isBlackJack
         
-
+def checkFirstTwoPair(cards):
+    isFirstTwoaPair = False
+    if len(cards) == 2:
+        rank1 = cards[0][0]
+        rank2 = cards[1][0]
+        
+        if rank1 in CHECKCARDS and rank2 in CHECKCARDS: 
+            if rank1 == rank2:
+                isFirstTwoaPair = True
+        if rank1 not in FACECARDS and rank1 == rank2:
+                isFirstTwoaPair = True
+    return isFirstTwoaPair
+            
+            
 
 def displayCards(cards):
     """Display all the cards in the cards list."""
