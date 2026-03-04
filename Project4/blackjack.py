@@ -5,7 +5,7 @@ import random, sys
 
 # Set up constants
 
-HEARTS = chr(9892) 
+HEARTS = chr(9829) 
 DIAMONDS = chr(9830)
 SPADES = chr(9824)
 CLUBS = chr(9827)
@@ -41,7 +41,7 @@ def main():
         bet = getBet(money)
         
         # Give the dealer and player two cards from the deck each:
-        deck = getBet(money)
+        deck = getDeck()
         dealerHand = [deck.pop(), deck.pop()]
         playerHand = [deck.pop(), deck.pop()]
         
@@ -63,7 +63,7 @@ def main():
                 # Player is doubling down, they can increase their bet:
                 additionalBet = getBet(min(bet, (money - bet))) 
                 bet += additionalBet
-                print('Bet increased to {}.'.format(rank, suit))
+                print('Bet increased to {}.'.format(bet))
                 print('Bet:', bet)
                 
             if move in ('H', 'D'):
@@ -101,7 +101,7 @@ def main():
             dealerValue = getHandValue(dealerHand)
             # Handle whether the player won, lost, or tiedL
             if dealerValue > 21:
-                print('Dealer busts! You win $()!'.format(bet))
+                print('Dealer busts! You win ${}!'.format(bet))
                 money += bet
             elif(playerValue > 21) or (playerValue < dealerValue):
                 print('You lost!')
@@ -119,7 +119,7 @@ def getBet(maxBet):
     """Ask the player how much they want to bet for this round"""
     while True: # Keep asking until they enter a valid amount.
         print('How much do you bet? (1-{}, or QUIT)'.format(maxBet))
-        bet = inout('> ').upper().strip()
+        bet = input('> ').upper().strip()
         if bet == 'QUIT':
             print('Thanks for playing!')
             sys.exit()
