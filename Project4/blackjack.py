@@ -10,10 +10,13 @@ DIAMONDS = chr(9830)
 SPADES = chr(9824)
 CLUBS = chr(9827)
 BACKSIDE = 'backside'
-CHECKCARDS = ('10', 'J', 'Q', 'K')
+CHECKCARDS = ('10', 'J', 'Q', 'K', 'A')
 FACECARDS = ('J', 'Q', 'K', 'A')
+CARDSOUTCOUNT = 0
+
 
 def main():
+    global CARDSOUTCOUNT
     print('''Welcome to Blackjack!
           Rules:
           Try to get as close as possible to 21 (yes like the move lol, just without Kevin Spacey this time)
@@ -27,6 +30,7 @@ def main():
           In case of a tie, the bet is returned to the player.
           The dealer stops hitting at 17''')
     
+    global CARDSOUTCOUNT
     money = 5000 # establish players bank. 
     while True: # Main game loop
         # Check if the player has any money before proceeding
@@ -39,13 +43,22 @@ def main():
         # If we are this far, the player has money
         # Lets have the player made a bet 
         
+        
         print('Money:', money)
+                
         bet = getBet(money)
+      
         
         # Give the dealer and player two cards from the deck each:
         deck = getDeck()
         dealerHand = [deck.pop(), deck.pop()] # Removes 2 cards from end of list
         playerHand = [deck.pop(), deck.pop()]
+        CARDSOUTCOUNT = CARDSOUTCOUNT + 2
+        
+        playerHand = [('A', '♠'), ('A', '♥')]  # pair of aces
+
+        if CARDSOUTCOUNT == 2:
+            isFirstTwoaPair = checkFirstTwoPair(playerHand)         
         
         # Handle the player actions
         print('Bet:', bet)
@@ -58,7 +71,7 @@ def main():
                 break # GAME OVER 
             
             # Get the player's move, either H, S and D:
-            move = getMove(playerHand, money - bet)
+            move = getMove(playerHand, money - bet, isFirstTwoaPair)
             
             # Handle the players actions
             if move == 'D':
@@ -75,6 +88,22 @@ def main():
                 rank, suit = newCard
                 print('You drew a {} of {}'.format(rank, suit))
                 playerHand.append(newCard)
+            
+                
+            if move == 'E':
+                # Player first two is pair, they can increase split their hand and
+                #  bet on each hand:
+                print('Make a second bet!')
+                isFirstTwoaPair = False
+                CARDSOUTCOUNT = 0
+                bet2 = getBet(money - bet)
+                #min returns the smaller of the two values
+                bet2 += bet2
+                print('Bet 2 increased to {}.'.format(bet2))
+                print('Bet:', bet2)
+                
+                splitCards()
+                           
                 
                 if getHandValue(playerHand) > 21:
                     # The player has busted:
@@ -104,19 +133,20 @@ def main():
             dealerValue = getHandValue(dealerHand)
             isplayerBlackJack = checkBlackJack(playerHand) # Check if player has blackjack
             isDealerBlackJack = checkBlackJack(dealerHand) # Check if dealer has blackjack
-            isFirstTwoaPair = checkFirstTwoPair(playerHand) 
+         
             # Handle whether the player won, lost, or tied
             if isplayerBlackJack == True:
                 bet = bet * 10 # You win big!
                 money += bet
-            elif isFirstTwoaPair == True:
-                bet = bet * 2
+           
             elif isDealerBlackJack == True:
                 bet = bet * 10 # You lose big!!
                 money -= bet
             elif dealerValue > 21:
                 print('Dealer busts! You win ${}!'.format(bet))
                 money += bet
+                if isFirstTwoaPair == True:
+                    money = money + bet2
             elif(playerValue > 21) or (playerValue < dealerValue):
                 print('You lost!')
                 money -= bet
@@ -198,6 +228,11 @@ def getHandValue(cards):
     checkBlackJack(cards)
     return value
 
+    
+def splitCards():
+    if  CARDSOUTCOUNT == 0:
+        return False
+
 # Determine if the player has a blackjack
 # If their first two cards are an ace of spades and a black jack
 def checkBlackJack(cards):
@@ -205,8 +240,6 @@ def checkBlackJack(cards):
     if len(cards) == 2:
         rank1 = cards[0][0] # (rank)(suit) == exp: ('A', '♠')
         rank2 = cards[1][0]
-        
-        # checkCards = ('10', 'J', 'Q', 'K') # we are checking for these cards
         
         if rank1 == 'A' and rank2 in CHECKCARDS:
             isBlackJack = True
@@ -216,17 +249,17 @@ def checkBlackJack(cards):
     return isBlackJack
         
 def checkFirstTwoPair(cards):
-    isFirstTwoaPair = False
-    if len(cards) == 2:
-        rank1 = cards[0][0]
-        rank2 = cards[1][0]
+    flag = False
+    rank1 = cards[0][0]
+    rank2 = cards[1][0]
         
-        if rank1 in CHECKCARDS and rank2 in CHECKCARDS: 
-            if rank1 == rank2:
-                isFirstTwoaPair = True
+    if rank1 in CHECKCARDS and rank2 in CHECKCARDS: 
+        if rank1 == rank2:
+            flag = True
         if rank1 not in FACECARDS and rank1 == rank2:
-                isFirstTwoaPair = True
-    return isFirstTwoaPair
+            flag = True
+            
+    return flag
             
             
 
@@ -252,7 +285,8 @@ def displayCards(cards):
     for row in rows:
         print(row)
         
-def getMove(playerHand, money):
+def getMove(playerHand, money, isFirstTwoaPair):
+    global CARDSOUTCOUNT
     """Asks the player for their move, and returns 'H' for hit, 'S' for
     stand, and 'D' for double down."""
     while True: # Keep looping until the player enters a correct move.
@@ -264,12 +298,18 @@ def getMove(playerHand, money):
         if len(playerHand) == 2 and money > 0:
             moves.append('(D)ouble down')
             
+        # If the players first two cards are the same the player has the option to split the hand. 
+        if len(playerHand) == 2 and money > 0 and isFirstTwoaPair == True and CARDSOUTCOUNT == 2:
+            moves.append('(E)xtra split')
+            
         # Get the player's move:
         movePrompt = ', '.join(moves) + '> ' # combine all moves
         move = input(movePrompt).upper() # Format them 
         if move in ('H', 'S'): # Check what move the player gave us
             return move # The player has entered a valid move.
         if move == 'D' and '(D)ouble down' in moves:
+            return move # Player has entered a valid move
+        if move == 'E' and '(E)xtra split' in moves:
             return move # Player has entered a valid move
         
 # if the program is run (instead of imported), run the game:
