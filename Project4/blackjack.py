@@ -63,7 +63,7 @@ def main():
         print('Bet:', bet)
         while True: # Keep looping until player stands or busts
             
-            displayHands(playerHand, dealerHand, False) # Call displayHands with three arguments
+            displayHands(playerHand, dealerHand, False, False) # Call displayHands with three arguments
             print()
                
             # Check if player has busts
@@ -91,7 +91,7 @@ def main():
                 playerHand.append(newCard)
             
                 
-            if move == 'E':
+            if move == 'E' and isFirstTwoaPair == True:
                 # Player first two is pair, they can increase split their hand and
                 #  bet on each hand:
                 print('Make a second bet!')
@@ -109,19 +109,54 @@ def main():
                 playerHand = hand1
                 playerHand2 = hand2
                                            
-                if getHandValue(playerHand or playerHand2) > 21:
-                    # The player has busted:
-                    continue
-                displayHands(playerHand2, dealerHand, False) # Call displayHands with three arguments
+                displayHands(playerHand2, dealerHand, False, True) # Call displayHands with three arguments
                 print()
-                # Check if player has busts
-                if getHandValue(playerHand2) > 21:
-                    break # GAME OVER 
+ 
                 move = getMove(playerHand2, money - bet, isFirstTwoaPair)
             
             if move in ('S', 'D'):
                 # Stand/doubling down stops the player's turn.
                 break
+            
+        if playerHand2:
+            while True: # Keep looping until player stands or busts
+                
+                if getHandValue(playerHand2) > 21:
+                    break # GAME OVER 
+            
+            
+                displayHands(playerHand2, dealerHand, False, False) # Call displayHands with three arguments
+                print()
+                
+                # Check if player has busts
+                if getHandValue(playerHand2) > 21:
+                    break # GAME OVER 
+                
+                # Get the player's move, either H, S and D:
+                move = getMove(playerHand2, money - bet, isFirstTwoaPair)
+        
+                
+                # Handle the players actions
+                if move == 'D':
+                    # Player is doubling down, they can increase their bet:
+                    additionalBet = getBet(min(bet, (money - bet))) 
+                    #min returns the smaller of the two values
+                    bet += additionalBet
+                    print('Bet increased to {}.'.format(bet))
+                    print('Bet:', bet)
+                    
+                if move in ('H', 'D'):
+                        # Hit/doubling down takes another card.
+                    newCard = deck.pop()
+                    rank, suit = newCard
+                    print('You drew a {} of {}'.format(rank, suit))
+                    playerHand2.append(newCard)
+                
+                if move in ('S', 'D'):
+                # Stand/doubling down stops the player's turn.
+                    break
+                
+            
         
         # Handle the dealer's actions:
         if getHandValue(playerHand) <= 21:
@@ -129,25 +164,25 @@ def main():
                 # The dealer hits:
                 print('Dealer Hits...')
                 dealerHand.append(deck.pop())
-                displayHands(playerHand, dealerHand, False)
+                displayHands(playerHand, dealerHand, False, False)
                 
                 if getHandValue(dealerHand) > 21:
                     break # The dealer has busted.
                 input('Press Enter to continue...')
                 print('\n\n')
                 
-                if isFirstTwoaPair == True:
-                    if getHandValue(playerHand2) <= 21:
-                        displayHands(playerHand2, dealerHand, False)
-                        input('Press Enter to continue...')
-                        print('\n\n')
+                # if isFirstTwoaPair == True:
+                #     if getHandValue(playerHand2) <= 21:
+                #         displayHands(playerHand2, dealerHand, False, True)
+                #         input('Press Enter to continue...')
+                #         print('\n\n')
                         
                 
             # Show the final hands:
-            displayHands(playerHand, dealerHand, True)
+            displayHands(playerHand, dealerHand, True, True)
             
             if isFirstTwoaPair == True:
-                displayHands(playerHand2, dealerHand, False)
+                displayHands(playerHand2, dealerHand, False, True)
             
             
             
@@ -165,6 +200,7 @@ def main():
                 money += bet
             
             elif isFirstTwoaPair:
+                
                 if (playerValue2 > 21) or (playerValue2 < dealerValue):
                     print('You lost!')
                     money -= bet2
@@ -232,11 +268,11 @@ def getDeck():
     random.shuffle(deck)
     return deck
 
-def displayHands(playerHand, dealerHand, showDealerHand):
+def displayHands(playerHand, dealerHand, showDealerHand, areTwoHands):
     """Show the player's and dealer's cards. Hide the dealer's 
     first card if showDealerHand is False"""
     print()
-    if showDealerHand: # Bool value
+    if showDealerHand and areTwoHands: # Bool value
         print('DEALER:' , getHandValue(dealerHand))
         displayCards(dealerHand)
     else:
