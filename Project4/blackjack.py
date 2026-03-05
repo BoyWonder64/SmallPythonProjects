@@ -16,7 +16,6 @@ CARDSOUTCOUNT = 0
 
 
 def main():
-    global CARDSOUTCOUNT
     print('''Welcome to Blackjack!
           Rules:
           Try to get as close as possible to 21 (yes like the move lol, just without Kevin Spacey this time)
@@ -58,20 +57,22 @@ def main():
         playerHand = [('A', '♠'), ('A', '♥')]  # pair of aces
 
         if CARDSOUTCOUNT == 2:
-            isFirstTwoaPair = checkFirstTwoPair(playerHand)         
+            isFirstTwoaPair = checkFirstTwoPair(playerHand)   
         
         # Handle the player actions
         print('Bet:', bet)
         while True: # Keep looping until player stands or busts
+            
             displayHands(playerHand, dealerHand, False) # Call displayHands with three arguments
             print()
-            
+               
             # Check if player has busts
             if getHandValue(playerHand) > 21:
                 break # GAME OVER 
             
             # Get the player's move, either H, S and D:
             move = getMove(playerHand, money - bet, isFirstTwoaPair)
+     
             
             # Handle the players actions
             if move == 'D':
@@ -102,12 +103,21 @@ def main():
                 print('Bet 2 increased to {}.'.format(bet2))
                 print('Bet:', bet2)
                 
-                splitCards()
-                           
+                hand1 = [playerHand[0], deck.pop()] 
+                hand2 = [playerHand[1], deck.pop()] 
                 
-                if getHandValue(playerHand) > 21:
+                playerHand = hand1
+                playerHand2 = hand2
+                                           
+                if getHandValue(playerHand or playerHand2) > 21:
                     # The player has busted:
                     continue
+                displayHands(playerHand2, dealerHand, False) # Call displayHands with three arguments
+                print()
+                # Check if player has busts
+                if getHandValue(playerHand2) > 21:
+                    break # GAME OVER 
+                move = getMove(playerHand2, money - bet, isFirstTwoaPair)
             
             if move in ('S', 'D'):
                 # Stand/doubling down stops the player's turn.
@@ -126,10 +136,25 @@ def main():
                 input('Press Enter to continue...')
                 print('\n\n')
                 
+                if isFirstTwoaPair == True:
+                    if getHandValue(playerHand2) <= 21:
+                        displayHands(playerHand2, dealerHand, False)
+                        input('Press Enter to continue...')
+                        print('\n\n')
+                        
+                
             # Show the final hands:
             displayHands(playerHand, dealerHand, True)
             
+            if isFirstTwoaPair == True:
+                displayHands(playerHand2, dealerHand, False)
+            
+            
+            
             playerValue = getHandValue(playerHand)
+            if isFirstTwoaPair == True:
+                playerValue2 = getHandValue(playerHand2)
+                isplayerBlackJack2 = checkBlackJack(playerHand2)
             dealerValue = getHandValue(dealerHand)
             isplayerBlackJack = checkBlackJack(playerHand) # Check if player has blackjack
             isDealerBlackJack = checkBlackJack(dealerHand) # Check if dealer has blackjack
@@ -138,21 +163,42 @@ def main():
             if isplayerBlackJack == True:
                 bet = bet * 10 # You win big!
                 money += bet
+            
+            elif isFirstTwoaPair:
+                if (playerValue2 > 21) or (playerValue2 < dealerValue):
+                    print('You lost!')
+                    money -= bet2
+                
+                elif playerValue2 > dealerValue:
+                    print('You won ${}'.format(bet2))
+                    money += bet2
+                
+                elif playerValue2 == dealerValue:
+                    print("It's a tie, the bet is returned to you.")
+                
+                elif isplayerBlackJack2 == True:
+                    bet2 = bet2 * 10 # You win big!
+                    money += bet2
+            
            
             elif isDealerBlackJack == True:
                 bet = bet * 10 # You lose big!!
                 money -= bet
+           
             elif dealerValue > 21:
                 print('Dealer busts! You win ${}!'.format(bet))
                 money += bet
-                if isFirstTwoaPair == True:
-                    money = money + bet2
+                if isFirstTwoaPair:
+                    money += bet2
+                
             elif(playerValue > 21) or (playerValue < dealerValue):
                 print('You lost!')
                 money -= bet
+         
             elif playerValue > dealerValue:
                 print('You won ${}'.format(bet))
                 money += bet
+                
             elif playerValue == dealerValue:
                 print("It's a tie, the bet is returned to you.")
             
@@ -268,7 +314,7 @@ def displayCards(cards):
     rows = ['', '', '', '', ''] # The text to display on each row
     
     for i, card in enumerate(cards):
-        rows[0] += ' ___ ' # Print the top line of the card
+        rows[0] += ' ____ ' # Print the top line of the card
         if card == BACKSIDE:
             # Print a cards back:
             rows[1] += '|## |'
@@ -279,7 +325,7 @@ def displayCards(cards):
             rank, suit = card # The card is a tuple data structures
             rows[1] += '|{} | '.format(rank.ljust(2))
             rows[2] += '| {} | '.format(suit)
-            rows[3] += '|_{}|'.format(rank.rjust(2, '_'))
+            rows[3] += '|_{}| '.format(rank.rjust(2, '_'))
     
     # Print each row on the screen
     for row in rows:
