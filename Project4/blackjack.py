@@ -12,7 +12,7 @@ CLUBS = chr(9827)
 BACKSIDE = 'backside'
 CHECKCARDS = ('10', 'J', 'Q', 'K', 'A')
 FACECARDS = ('J', 'Q', 'K', 'A')
-CARDSOUTCOUNT = 0
+
 
 
 def main():
@@ -27,9 +27,13 @@ def main():
           On your first play, you can (D)ouble down to increase your bet
           but must hit exactly one more time before standing.
           In case of a tie, the bet is returned to the player.
-          The dealer stops hitting at 17''')
+          The dealer stops hitting at 17
+          NEW RULE ADDED: If the first two cards are the same pair, then we
+          have the change to perofrm an (E)xtra hand by spliting
+          the hand into two hands. At the end you will have the chance to win. ''')
     
-    global CARDSOUTCOUNT
+
+    bet2 = 0
     money = 5000 # establish players bank. 
     while True: # Main game loop
         # Check if the player has any money before proceeding
@@ -52,11 +56,11 @@ def main():
         deck = getDeck()
         dealerHand = [deck.pop(), deck.pop()] # Removes 2 cards from end of list
         playerHand = [deck.pop(), deck.pop()]
-        CARDSOUTCOUNT = CARDSOUTCOUNT + 2
-        
+
+        # Use to troubleshoot or play with the same pair
         playerHand = [('A', '♠'), ('A', '♥')]  # pair of aces
 
-        if CARDSOUTCOUNT == 2:
+        if len(playerHand) == 2:
             isFirstTwoaPair = checkFirstTwoPair(playerHand)   
         
         # Handle the player actions
@@ -98,8 +102,6 @@ def main():
                 isFirstTwoaPair = False
                 CARDSOUTCOUNT = 0
                 bet2 = getBet(money - bet)
-                #min returns the smaller of the two values
-                bet2 += bet2
                 print('Bet 2 increased to {}.'.format(bet2))
                 print('Bet:', bet2)
                 
@@ -112,13 +114,12 @@ def main():
                 displayHands(playerHand2, dealerHand, False, True) # Call displayHands with three arguments
                 print()
  
-                move = getMove(playerHand2, money - bet, isFirstTwoaPair)
-            
+
             if move in ('S', 'D'):
                 # Stand/doubling down stops the player's turn.
                 break
             
-        if playerHand2:
+        if playerHand2 is not None:
             while True: # Keep looping until player stands or busts
                 
                 if getHandValue(playerHand2) > 21:
@@ -127,10 +128,6 @@ def main():
             
                 displayHands(playerHand2, dealerHand, False, False) # Call displayHands with three arguments
                 print()
-                
-                # Check if player has busts
-                if getHandValue(playerHand2) > 21:
-                    break # GAME OVER 
                 
                 # Get the player's move, either H, S and D:
                 move = getMove(playerHand2, money - bet, isFirstTwoaPair)
@@ -170,13 +167,7 @@ def main():
                     break # The dealer has busted.
                 input('Press Enter to continue...')
                 print('\n\n')
-                
-                # if isFirstTwoaPair == True:
-                #     if getHandValue(playerHand2) <= 21:
-                #         displayHands(playerHand2, dealerHand, False, True)
-                #         input('Press Enter to continue...')
-                #         print('\n\n')
-                        
+
                 
             # Show the final hands:
             displayHands(playerHand, dealerHand, True, True)
@@ -187,38 +178,50 @@ def main():
             
             
             playerValue = getHandValue(playerHand)
-            if isFirstTwoaPair == True:
+            if playerHand2 is not None:
                 playerValue2 = getHandValue(playerHand2)
                 isplayerBlackJack2 = checkBlackJack(playerHand2)
             dealerValue = getHandValue(dealerHand)
             isplayerBlackJack = checkBlackJack(playerHand) # Check if player has blackjack
             isDealerBlackJack = checkBlackJack(dealerHand) # Check if dealer has blackjack
          
-            # Handle whether the player won, lost, or tied
+
+         # This is the final place where we check our rare situation where if the first two are a pair we have split two hands. 
+        if playerHand2 is not None:
+       # Handle whether the players second hand won, lost, or tied
+            if isDealerBlackJack == True:
+                bet = bet * 10 # You lose big!!
+                money -= bet
+            
+            if ((playerValue2 > 21) or (playerValue2 < dealerValue)) and ((playerValue > 21) or (playerValue < dealerValue)):
+                print('You lost!')
+                money -= bet2
+            
+            elif playerValue2 > dealerValue or playerValue > dealerValue:
+                print('You won ${}'.format(bet2))
+                money += bet2
+            
+            elif playerValue2 == dealerValue or playerValue == dealerValue:
+                print("It's a tie, the bet is returned to you.")
+            
+            elif isplayerBlackJack2 == True or isplayerBlackJack == True:
+                bet2 = bet2 * 10 # You win big!
+                print("Wow! Blackjack!")
+                money += bet2
+            
+            input('Press Enter to continue...')
+            print('\n\n')
+            
+        if playerValue2 is None:
+             # Handle whether the player won, lost, or tied
             if isplayerBlackJack == True:
                 bet = bet * 10 # You win big!
+                print("Wow! Blackjack!")
                 money += bet
-            
-            elif isFirstTwoaPair:
-                
-                if (playerValue2 > 21) or (playerValue2 < dealerValue):
-                    print('You lost!')
-                    money -= bet2
-                
-                elif playerValue2 > dealerValue:
-                    print('You won ${}'.format(bet2))
-                    money += bet2
-                
-                elif playerValue2 == dealerValue:
-                    print("It's a tie, the bet is returned to you.")
-                
-                elif isplayerBlackJack2 == True:
-                    bet2 = bet2 * 10 # You win big!
-                    money += bet2
-            
            
             elif isDealerBlackJack == True:
                 bet = bet * 10 # You lose big!!
+                print("Sorry! Blackjack!")
                 money -= bet
            
             elif dealerValue > 21:
@@ -272,7 +275,7 @@ def displayHands(playerHand, dealerHand, showDealerHand, areTwoHands):
     """Show the player's and dealer's cards. Hide the dealer's 
     first card if showDealerHand is False"""
     print()
-    if showDealerHand and areTwoHands: # Bool value
+    if showDealerHand: # Bool value
         print('DEALER:' , getHandValue(dealerHand))
         displayCards(dealerHand)
     else:
@@ -309,11 +312,6 @@ def getHandValue(cards):
     
     checkBlackJack(cards)
     return value
-
-    
-def splitCards():
-    if  CARDSOUTCOUNT == 0:
-        return False
 
 # Determine if the player has a blackjack
 # If their first two cards are an ace of spades and a black jack
