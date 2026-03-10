@@ -68,8 +68,10 @@ def main():
                     logo[DIR] = DOWN_RIGHT
                     cornerBounces += 1
                 elif logo[X] == 0 and logo[Y] == HEIGHT -1:
+                    logo[DIR] = UP_RIGHT
                     cornerBounces += 1
                 elif logo[X] == WIDTH -3 and logo[Y] == 0:
+                    logo[DIR] = DOWN_LEFT
                     cornerBounces += 1
                 elif logo[X] == WIDTH -3 and logo[Y] == HEIGHT -1:
                     logo[DIR] = UP_LEFT
@@ -83,6 +85,7 @@ def main():
                     logo[DIR] = DOWN_RIGHT
                     
                 # See if the logo bounces off the right edge:
+                # (WIDTH - 3 because 'DVD' has three letters)
                 elif logo[X] == WIDTH - 3 and logo[DIR] == UP_RIGHT:
                     logo[DIR] = UP_LEFT
                         
@@ -97,11 +100,11 @@ def main():
                     logo[DIR] = DOWN_RIGHT
                     
                 # See if the logo bounces off the bottom edge:
-                elif logo[Y] == HEIGHT - 1 and logo[DIR] == UP_LEFT:
-                    logo[DIR] = DOWN_LEFT
+                elif logo[Y] == HEIGHT - 1 and logo[DIR] == DOWN_LEFT:
+                    logo[DIR] = UP_LEFT
                         
-                elif logo[Y] == HEIGHT - 1 and logo[DIR] == UP_RIGHT:
-                    logo[DIR] = DOWN_RIGHT
+                elif logo[Y] == HEIGHT - 1 and logo[DIR] == DOWN_RIGHT:
+                    logo[DIR] = UP_RIGHT
                     
                     
                 if logo[DIR] != originalDirection:
