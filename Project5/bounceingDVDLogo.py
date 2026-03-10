@@ -22,8 +22,8 @@ WIDTH, HEIGHT = bext.size()
 # newline automatically, so reduce the width by one:
 WIDTH -= 1
 
-NUMBER_OF_LOGOS = 15 # (!) Feel free to change this to any value from 1 to 100
-PAUSE_AMOUNT = 0.2 # (!) Feel free to change this is any value like 1.0 or 0.0
+NUMBER_OF_LOGOS = 3 # (!) Feel free to change this to any value from 1 to 100
+PAUSE_AMOUNT = 0.1 # (!) Feel free to change this is any value like 1.0 or 0.0
 # (!) Try changing this list to fewer colors if you want
 COLORS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
@@ -149,4 +149,18 @@ if __name__ == '__main__':
         print()
         print('Bouncing DVD Logo made by me')
         sys.exit() # When CTRL-C is pressed, the program ends
-            
+        
+# Check your knowledge
+
+# What happens if you change WIDTH, HEIGHT = bext.size() on line 20 to WIDTH, HEIGHT = 10, 5?
+    # bext errors out because it needs 0, 0 arguments which is given by default on blank
+
+# What happens if you replace DIR: random.choice(DIRECTIONS) on line 52 with DIR: DOWN_RIGHT?
+     # The direction will always start down right
+     
+# How can you make the 'Corner bounces:' text not appear on the screen
+    # Comment out line 132: print('Corner bounces:', cornerBounces, end='')
+    
+# What error message do you get if you delete or comment out cornerBounces = 0 on line 57
+    # The program errors out because its needed to print, if we remove it from that, we simply 
+    # dont track how many times we touched the corner
