@@ -86,3 +86,22 @@ try:
     print('Full {}ed text copied to clipboard'.format(mode))
 except:
     pass # Do noting pyperclip is throwing a tantrum
+
+
+# Test your knowledge
+
+# What happens if you change the symbol list from the full alphabet to just ABC
+    # The key is can only be from 0 to 2 letters and itll only change the letters A, B and C. The 
+    # message also becomes very easy
+    
+# What happens if you encrypt the message with a 0 key
+    # The message doesnt have its letters shifted and therefore it comes out the same as it did 
+    # going in
+    
+# What error message do you get if you remove the translated = '' 
+    # You have an unbound variable
+
+# What happens if you change translated = translated + SYMBOLS[num] on line 76 to
+# translated = translated + symbol
+    # The translated variable doesnt get the updated letter so it doesnt
+    # become encryted and you get the same message you put in
