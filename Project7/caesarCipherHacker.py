@@ -36,3 +36,15 @@ for key in range(len(SYMBOLS)): # for each key in the length of the symbol list 
     
     # Display the key being tested, along with its decrypted text:
     print('Key #{}: {}'.format(key, translated))
+    
+    # Test your knowledge
+    
+    # What error message if you delete the line that has translated = ''
+        # Unbound local variable, and therefore you wont get your message
+        
+    # What happens if you change translated = translated + SYMBOLS[num] on line 33
+    # to translated = translated + symbols
+        # The message isnt encryted or decrypted
+        
+    # What happens if you enter an unencrypted message into the caesear cipher hacker program?
+        # Then it prints out the message 25 times and its not needing to encrypt anything
