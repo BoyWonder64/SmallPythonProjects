@@ -63,4 +63,6 @@ def getCalendarFor(year, month):
         
         # dayNumberRow is a row with the day number labels:
         dayNumberRow = ''
-    
+        for i in range(7):
+            dayNumberLabel = str(currentDate.day).rjust(2)
+            dayNumberRow += '|' + dayNumberLabel + (' ' * 8)
