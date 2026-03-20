@@ -44,10 +44,10 @@ def getCalendarFor(year, month):
     calText += '...Sunday.....Monday....Tuesday...Wednesday...Thursday....Friday....Saturday..\n'
     
     # The horizontal line string that separate weeks:
-    weekSeparator = ('+----------' * 7) + '\n'
+    weekSeparator = ('+-------------' * 7) + '\n'
     
     # The blank rows have ten spaces in between the | day separators:
-    blankRow = ('|           ' * 7) + '|\n'
+    blankRow = ('|          ' * 7) + '|\n'
     
     # Get the first date in the month. (The datetime module handles all
     # the complicated calendar stuff for us here.)
@@ -66,3 +66,29 @@ def getCalendarFor(year, month):
         for i in range(7):
             dayNumberLabel = str(currentDate.day).rjust(2)
             dayNumberRow += '|' + dayNumberLabel + (' ' * 8)
+            currentDate += datetime.timedelta(days=1) # Go to next day
+        dayNumberRow += '|\n' # Add the vertical line after Saturday
+        
+    
+        # Add the day number row and 3 blank rows to the calendar text.
+        calText += dayNumberRow
+        for i in range(3): # (!) Try changing the 4 to a 5 or 10
+            calText += blankRow
+            
+        # Check if we're done with the month:
+        if currentDate.month != month:
+            break
+    
+    # Add the horizontal line at the very bottom of the caldenar
+    calText += weekSeparator
+    return calText
+
+calText = getCalendarFor(year, month)
+print(calText) # This displays the calendar
+
+# Save the calendar to a text file:
+calendarFileName = 'calendar_{}_{}.txt'.format(year, month)
+with open (calendarFileName, 'w') as fileObj:
+    fileObj.write(calText)
+    
+print('Saved to ' + calendarFileName)
