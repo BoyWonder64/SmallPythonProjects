@@ -92,3 +92,24 @@ with open (calendarFileName, 'w') as fileObj:
     fileObj.write(calText)
     
 print('Saved to ' + calendarFileName)
+
+# Test your knowledge
+
+# How can you make the calendar abbreviated months like Jan instead of January
+    # Simply change the list to them instead
+    
+# What error message you do get if ou delete or comment out the year = int(response)
+    # The year isn't set to an int and the input is lost because it isnt saved in the year
+    # You dont get an error
+    
+# How can you make the calendar not display the days of the week at the top
+    # remove calText+= the days of the week
+    
+# How can you make the program not save a calendar to a file
+    # remove the following code: 
+    # calendarFileName = 'calendar_{}_{}.txt'.format(year, month)
+    # with open (calendarFileName, 'w') as fileObj:
+        # fileObj.write(calText)
+        
+# What happens if you delete or comment out print(calText on line 93)
+    # The calendar isnt printed to the screen. 
